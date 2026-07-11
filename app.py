@@ -1,20 +1,7 @@
 """
 FinSight — Finance Analytics Dashboard
 =========================================
-A Flask web application demonstrating a full finance-analytics pipeline on
-two related (synthetic) tables — customers & transactions:
 
-  Python (pandas, numpy)   -> data wrangling, merge/join, groupby
-  Data cleaning            -> missing values, imputation, IQR outliers, dupes
-  EDA & statistics         -> spending patterns, income vs expense
-  Visualization            -> interactive Plotly charts
-  Machine Learning         -> Linear Regression (credit score), Logistic
-                               Regression + Random Forest (loan default risk),
-                               K-Means (customer risk segmentation)
-
-Run:
-    python app.py
-Then open http://127.0.0.1:5000
 """
 
 import io

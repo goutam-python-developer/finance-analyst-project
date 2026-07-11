@@ -1,8 +1,7 @@
 """
 Data Cleaning utilities — Finance Analytics
 ---------------------------------------------
-Missing-value reports, IQR outlier detection, duplicate handling, and a
-clean merge of the customers + transactions tables.
+
 """
 
 import numpy as np
@@ -78,8 +77,7 @@ def clean_transactions(transactions: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_customer_features(customers_clean: pd.DataFrame, transactions_clean: pd.DataFrame) -> pd.DataFrame:
-    """Merge + aggregate: one row per customer with behavioural features.
-    Demonstrates pandas merge/groupby working together on two tables."""
+    
     agg = transactions_clean.groupby("CustomerID").agg(
         TxnCount=("TransactionID", "count"),
         TotalDebit=("Amount", lambda s: s[transactions_clean.loc[s.index, "TransactionType"] == "Debit"].sum()),

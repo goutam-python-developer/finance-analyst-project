@@ -1,12 +1,7 @@
 """
 Finance Analytics Data Generator
 ----------------------------------
-Generates two related tables — customers.csv and transactions.csv — so the
-project can demonstrate real pandas merge/join work, not just single-table
-analysis. Intentionally messy (missing values, outliers, duplicates) so
-the cleaning pipeline has real work to do.
 
-Run directly: python src/data_generator.py
 """
 
 import numpy as np

@@ -21,7 +21,7 @@ from sklearn.metrics import (
 
 
 def train_credit_score_regression(features_df: pd.DataFrame) -> dict:
-    """Linear Regression: predict CreditScore from income & spending behaviour."""
+
     cols = ["MonthlyIncome", "TxnCount", "TotalDebit", "TotalCredit", "AvgBalance", "SavingsRate"]
     data = features_df.dropna(subset=cols + ["CreditScore"])
     X = data[cols]
