@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}EDA & Insights{% endblock %}
+{% block content %}
+  <div class="page-eyebrow">Ledger 03 / Exploration</div>
+  <h1 class="page-title">Exploratory Data Analysis</h1>
+  <p class="page-sub">Univariate, bivariate and multivariate views of customer financial behaviour.</p>
+
+  <div class="grid-2">
+    <div class="panel"><div class="panel-title">Univariate — Monthly Income</div><div id="income_hist"></div></div>
+    <div class="panel"><div class="panel-title">Univariate — Credit Score</div><div id="credit_hist"></div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel"><div class="panel-title">Bivariate — Income vs Credit Score</div><div id="income_vs_credit"></div></div>
+    <div class="panel"><div class="panel-title">Bivariate — Amount by Transaction Type</div><div id="amount_box"></div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Multivariate — Correlation Heatmap</div>
+    <div class="panel-sub">Across income, credit score, loan and behavioural features</div>
+    <div id="corr_heatmap"></div>
+  </div>
+
+  <script>
+    const charts = {{ charts_json | safe }};
+    const cfg = {responsive: true, displayModeBar: false};
+    for (const [id, fig] of Object.entries(charts)) { Plotly.newPlot(id, fig.data, fig.layout, cfg); }
+  </script>
+{% endblock %}

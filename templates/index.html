@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+  <div class="page-eyebrow">Ledger 01 / Overview</div>
+  <h1 class="page-title">Finance Performance Dashboard</h1>
+  <p class="page-sub">Live KPIs computed from cleaned customer &amp; transaction tables — cash flow, spending patterns, and fraud rate.</p>
+
+  <div class="chip-row">
+    <span class="chip python">Python</span>
+    <span class="chip pandas">pandas</span>
+    <span class="chip numpy">numpy</span>
+    <span class="chip plotly">Plotly.js</span>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">Total Credit (Income)</div><div class="kpi-value">₹{{ total_credit }}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total Debit (Expense)</div><div class="kpi-value">₹{{ total_debit }}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Net Cash Flow</div><div class="kpi-value">₹{{ net_flow }}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Fraud Rate</div><div class="kpi-value">{{ fraud_rate }}%</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Monthly Cash Flow</div>
+    <div class="panel-sub">Credit vs Debit trend across the dataset period</div>
+    <div id="monthly_flow"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel"><div class="panel-title">Spend by Category</div><div id="spend_by_category"></div></div>
+    <div class="panel"><div class="panel-title">Payment Mode Mix</div><div id="payment_mix"></div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Average Monthly Income — Top Cities</div>
+    <div id="avg_income_by_city"></div>
+  </div>
+
+  <script>
+    const charts = {{ charts_json | safe }};
+    const cfg = {responsive: true, displayModeBar: false};
+    for (const [id, fig] of Object.entries(charts)) { Plotly.newPlot(id, fig.data, fig.layout, cfg); }
+  </script>
+{% endblock %}

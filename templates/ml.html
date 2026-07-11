@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}ML Models{% endblock %}
+{% block content %}
+  <div class="page-eyebrow">Ledger 04 / Machine Learning</div>
+  <h1 class="page-title">ML Models</h1>
+  <p class="page-sub">Three models trained live with scikit-learn: credit score regression, loan default classification, and customer risk segmentation.</p>
+
+  <div class="chip-row">
+    <span class="chip sklearn">scikit-learn</span>
+    <span class="chip">Linear Regression</span>
+    <span class="chip">Logistic Regression</span>
+    <span class="chip">Random Forest</span>
+    <span class="chip">K-Means</span>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">1 · Linear Regression — Credit Score Prediction</div>
+    <div class="panel-sub">Predicts CreditScore from income &amp; transaction behaviour</div>
+    <div class="grid-2">
+      <div>
+        <ul class="metric-list">
+          <li><span>R² Score</span><span class="val">{{ reg.r2 }}</span></li>
+          <li><span>Mean Absolute Error</span><span class="val">{{ reg.mae }} pts</span></li>
+          <li><span>Intercept</span><span class="val">{{ reg.intercept }}</span></li>
+          {% for f, c in reg.coefficients.items() %}
+          <li><span>Coefficient — {{ f }}</span><span class="val">{{ c }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div>
+        <div class="panel-sub">Try it live</div>
+        <div class="form-row">
+          <div class="form-field"><label>Monthly Income (₹)</label><input type="number" id="p_income" value="65000"></div>
+          <div class="form-field"><label>Txn Count</label><input type="number" id="p_txn" value="14"></div>
+          <div class="form-field"><label>Total Debit (₹)</label><input type="number" id="p_debit" value="30000"></div>
+          <div class="form-field"><label>Total Credit (₹)</label><input type="number" id="p_credit" value="65000"></div>
+          <div class="form-field"><label>Avg Balance (₹)</label><input type="number" id="p_bal" value="50000"></div>
+          <div class="form-field"><label>Savings Rate</label><input type="number" step="0.01" id="p_sr" value="0.4"></div>
+        </div>
+        <button class="btn btn-gold" onclick="predictScore()">Predict Credit Score</button>
+        <div id="pred_result" style="margin-top:14px; font-family: var(--font-mono); font-size: 20px; font-weight:600;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">2 · Loan Default Risk Classification</div>
+    <div class="panel-sub">Logistic Regression vs Random Forest — observed default rate: {{ clf.default_rate }}%</div>
+    <div class="grid-2">
+      <div>
+        <table class="data-table">
+          <thead><tr><th>Metric</th><th>Logistic Regression</th><th>Random Forest</th></tr></thead>
+          <tbody>
+            <tr><td>Accuracy</td><td>{{ clf.logistic_regression.accuracy }}</td><td>{{ clf.random_forest.accuracy }}</td></tr>
+            <tr><td>Precision</td><td>{{ clf.logistic_regression.precision }}</td><td>{{ clf.random_forest.precision }}</td></tr>
+            <tr><td>Recall</td><td>{{ clf.logistic_regression.recall }}</td><td>{{ clf.random_forest.recall }}</td></tr>
+            <tr><td>F1 Score</td><td>{{ clf.logistic_regression.f1 }}</td><td>{{ clf.random_forest.f1 }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="feat_importance"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">3 · K-Means Customer Risk Segmentation</div>
+    <div class="panel-sub">Customers grouped by income, savings rate &amp; credit score into 4 segments</div>
+    <div class="grid-2">
+      <div id="seg_scatter"></div>
+      <div>
+        <table class="data-table">
+          <thead><tr><th>Segment</th><th>Customers</th><th>Avg Income</th><th>Avg Credit Score</th><th>Avg Savings Rate</th></tr></thead>
+          <tbody>
+            {% for s in seg_summary %}
+            <tr><td>{{ s.SegmentLabel }}</td><td>{{ s.Customers }}</td><td>₹{{ s.AvgIncome }}</td><td>{{ s.AvgCreditScore }}</td><td>{{ s.AvgSavingsRate }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const cfg = {responsive: true, displayModeBar: false};
+    Plotly.newPlot('seg_scatter', {{ seg_scatter | safe }}.data, {{ seg_scatter | safe }}.layout, cfg);
+    Plotly.newPlot('feat_importance', {{ feat_importance_chart | safe }}.data, {{ feat_importance_chart | safe }}.layout, cfg);
+
+    async function predictScore() {
+      const payload = {
+        MonthlyIncome: document.getElementById('p_income').value,
+        TxnCount: document.getElementById('p_txn').value,
+        TotalDebit: document.getElementById('p_debit').value,
+        TotalCredit: document.getElementById('p_credit').value,
+        AvgBalance: document.getElementById('p_bal').value,
+        SavingsRate: document.getElementById('p_sr').value,
+      };
+      const res = await fetch('/ml/predict_credit_score', {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      document.getElementById('pred_result').innerText = '≈ ' + data.predicted_credit_score + ' pts';
+    }
+  </script>
+{% endblock %}

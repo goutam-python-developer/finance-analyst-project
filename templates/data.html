@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Browse Transactions{% endblock %}
+{% block content %}
+  <div class="page-eyebrow">Ledger 05 / Records</div>
+  <h1 class="page-title">Browse Transactions</h1>
+  <p class="page-sub">Filter the cleaned, merged transaction table. Showing latest 300 matching rows of {{ row_count }} total.</p>
+
+  <form class="form-row" method="get">
+    <div class="form-field">
+      <label>Category</label>
+      <select name="category">
+        <option value="">All</option>
+        {% for c in categories %}<option value="{{ c }}" {{ 'selected' if selected.category == c }}>{{ c }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Type</label>
+      <select name="type">
+        <option value="">All</option>
+        <option value="Credit" {{ 'selected' if selected.type == 'Credit' }}>Credit</option>
+        <option value="Debit" {{ 'selected' if selected.type == 'Debit' }}>Debit</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Payment Mode</label>
+      <select name="payment">
+        <option value="">All</option>
+        {% for p in payments %}<option value="{{ p }}" {{ 'selected' if selected.payment == p }}>{{ p }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Fraudulent</label>
+      <select name="fraud">
+        <option value="">All</option>
+        <option value="Yes" {{ 'selected' if selected.fraud == 'Yes' }}>Yes</option>
+        <option value="No" {{ 'selected' if selected.fraud == 'No' }}>No</option>
+      </select>
+    </div>
+    <button class="btn btn-gold" type="submit">Apply Filters</button>
+    <a class="btn" href="{{ url_for('browse') }}">Reset</a>
+  </form>
+
+  <div class="panel">
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr><th>Txn ID</th><th>Date</th><th>Customer</th><th>City</th><th>Type</th><th>Category</th><th>Amount</th><th>Payment</th><th>Merchant</th><th>Fraud</th></tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r.TransactionID }}</td>
+            <td>{{ r.TransactionDate }}</td>
+            <td>{{ r.CustomerName }}</td>
+            <td>{{ r.City }}</td>
+            <td>{{ r.TransactionType }}</td>
+            <td>{{ r.Category }}</td>
+            <td>₹{{ r.Amount }}</td>
+            <td>{{ r.PaymentMode }}</td>
+            <td>{{ r.Merchant }}</td>
+            <td>{% if r.IsFraudulent == 'Yes' %}<span class="badge badge-yes">Yes</span>{% else %}<span class="badge badge-no">No</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

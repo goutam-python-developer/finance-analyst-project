@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Data Cleaning{% endblock %}
+{% block content %}
+  <div class="page-eyebrow">Ledger 02 / Preparation</div>
+  <h1 class="page-title">Data Cleaning &amp; Quality Report</h1>
+  <p class="page-sub">Two related tables — Customers and Transactions — are audited for missing values, duplicates and outliers before any merge or ML training happens.</p>
+
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">Raw Customers</div><div class="kpi-value">{{ raw_customers }}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Raw Transactions</div><div class="kpi-value">{{ raw_txns }}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Duplicate Txn Rows</div><div class="kpi-value">{{ dup_count }}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Clean Rows (Cust / Txn)</div><div class="kpi-value">{{ clean_customers }} / {{ clean_txns }}</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Missing Values — Customers</div>
+      <table class="data-table">
+        <thead><tr><th>Column</th><th>Missing</th><th>%</th></tr></thead>
+        <tbody>
+          {% for row in missing_cust %}
+          <tr><td>{{ row.Column }}</td><td>{{ row.MissingCount }}</td><td>{{ row.MissingPercent }}%</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Missing Values — Transactions</div>
+      <table class="data-table">
+        <thead><tr><th>Column</th><th>Missing</th><th>%</th></tr></thead>
+        <tbody>
+          {% for row in missing_txn %}
+          <tr><td>{{ row.Column }}</td><td>{{ row.MissingCount }}</td><td>{{ row.MissingPercent }}%</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Outlier Report — IQR Method</div>
+    <table class="data-table">
+      <thead><tr><th>Column</th><th>Q1</th><th>Q3</th><th>Lower</th><th>Upper</th><th>Outliers</th></tr></thead>
+      <tbody>
+        {% for row in outliers %}
+        <tr><td>{{ row.Column }}</td><td>{{ row.Q1 }}</td><td>{{ row.Q3 }}</td><td>{{ row.LowerBound }}</td><td>{{ row.UpperBound }}</td><td>{{ row.OutlierCount }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Cleaning Pipeline</div>
+    <div class="panel-sub">Steps applied by <code>src/data_cleaning.py</code></div>
+    <ul class="metric-list">
+      <li><span>1. Drop exact duplicate transactions</span><span class="val">{{ dup_count }} removed</span></li>
+      <li><span>2. Impute Age / CreditScore / MonthlyIncome with median</span><span class="val">✓</span></li>
+      <li><span>3. Impute BalanceAfterTxn / PaymentMode with median / mode</span><span class="val">✓</span></li>
+      <li><span>4. Clip CreditScore to valid 300–900 range (IQR-informed)</span><span class="val">✓</span></li>
+      <li><span>5. Cap transaction Amount outliers via IQR</span><span class="val">✓</span></li>
+      <li><span>6. Merge customers + transactions into behavioural features</span><span class="val">✓</span></li>
+    </ul>
+  </div>
+{% endblock %}

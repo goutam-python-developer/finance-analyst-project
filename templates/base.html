@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}FinSight{% endblock %} — Finance Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">₹</span>
+      <div>
+        <div class="brand-name">FinSight</div>
+        <div class="brand-sub">Finance Analytics</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="{{ url_for('dashboard') }}" class="nav-item {{ 'active' if active=='dashboard' }}"><span class="nav-tag">01</span> Dashboard</a>
+      <a href="{{ url_for('cleaning') }}" class="nav-item {{ 'active' if active=='cleaning' }}"><span class="nav-tag">02</span> Data Cleaning</a>
+      <a href="{{ url_for('eda') }}" class="nav-item {{ 'active' if active=='eda' }}"><span class="nav-tag">03</span> EDA &amp; Insights</a>
+      <a href="{{ url_for('ml') }}" class="nav-item {{ 'active' if active=='ml' }}"><span class="nav-tag">04</span> ML Models</a>
+      <a href="{{ url_for('browse') }}" class="nav-item {{ 'active' if active=='browse' }}"><span class="nav-tag">05</span> Browse Transactions</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="waybill">
+        <div class="waybill-row"><span>CUSTOMERS</span><span>{{ total_customers or '—' }}</span></div>
+        <div class="waybill-row"><span>TRANSACTIONS</span><span>{{ total_txns or '—' }}</span></div>
+        <div class="waybill-row"><span>STATUS</span><span class="dot-ok">LIVE</span></div>
+      </div>
+      <a class="export-link" href="{{ url_for('export_excel') }}">⇩ Export cleaned Excel</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>
